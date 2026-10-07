@@ -1,0 +1,47 @@
+Ejercicio 1 — Hola Hilo
+
+Pregunta: ¿Qué sucede si llamas a hilo.run() en lugar de hilo.start()? ¿Cuál es la diferencia?
+
+Respuesta: Si usamos start(), se crea un hilo nuevo y el método run() se ejecuta dentro de ese hilo. De esta manera, el programa puede realizar varias tareas al mismo tiempo. En cambio, si llamamos directamente a run(), no se crea ningún hilo nuevo, sino que el método se ejecuta normalmente dentro del hilo que lo llamó, por ejemplo, main. Por eso, start() permite trabajar de forma concurrente, mientras que run() directamente no. Además, un mismo hilo no puede ejecutar start() dos veces, pero run() sí puede llamarse varias veces.
+
+
+Ejercicio 2 — Hilos con Runnable
+
+Pregunta: ¿Cuál es la principal ventaja de usar Runnable en lugar de extender Thread?
+
+Respuesta: La principal ventaja es que Java no permite que una clase herede de dos clases diferentes. Por eso, si una clase extiende Thread, ya no puede heredar de otra clase. En cambio, usando Runnable, la clase puede seguir heredando de otra clase y además implementar la interfaz Runnable. También permite separar la tarea que queremos realizar de la forma en que se ejecuta. Esto hace que el código sea más ordenado y permite reutilizar la misma tarea en diferentes hilos.
+
+
+Ejercicio 3 — Múltiples Hilos Simples
+
+Pregunta: ¿El orden de las salidas siempre es el mismo? ¿Por qué sí o por qué no?
+
+Respuesta: No, el orden puede cambiar cada vez que ejecutamos el programa. Esto pasa porque el sistema operativo decide qué hilo utiliza el procesador en cada momento. Aunque los hilos tengan el mismo tiempo de espera con Thread.sleep(100), pueden despertarse en momentos un poco diferentes. Por eso, las salidas pueden aparecer en distintos órdenes. El método start() inicia los hilos, pero no determina cuál de ellos se va a ejecutar primero.
+
+
+Ejercicio 4 — Compartiendo Datos y synchronized
+
+Pregunta: ¿Por qué synchronized resuelve el problema? ¿Qué es lo que bloquea exactamente?
+
+Respuesta: El problema aparece porque cuando hacemos valor++, en realidad se realizan varias acciones: primero se lee el valor, después se le suma uno y finalmente se guarda el nuevo valor. Si dos hilos hacen esto al mismo tiempo, pueden interferir entre ellos y hacer que se pierda algún incremento. synchronized evita este problema porque permite que solamente un hilo entre a la parte del código sincronizada de ese objeto a la vez. Los demás hilos tienen que esperar hasta que el primero termine. No se bloquea la variable directamente, sino el acceso a esa parte sincronizada del objeto.
+
+
+Ejercicio 5 — Productor-Consumidor Simple
+
+Pregunta: ¿Por qué es importante el bucle while en wait() en lugar de un if?
+
+Respuesta: El while es importante porque cuando un hilo sale de wait(), la condición que estaba esperando puede haber cambiado. También puede ocurrir que varios hilos se despierten al mismo tiempo con notifyAll(), aunque solamente uno pueda continuar. Si utilizáramos if, un hilo podría seguir ejecutándose aunque la condición ya no se cumpla. En cambio, con while se vuelve a comprobar la condición antes de continuar. Si todavía no se puede seguir, el hilo vuelve a esperar. Esto hace que el programa sea más seguro.
+
+
+Ejercicio 6 — Usando Executors y Future
+
+Pregunta: ¿Cuál es la ventaja de usar ExecutorService sobre la creación manual de hilos con new Thread()?
+
+Respuesta: ExecutorService permite administrar varios hilos de una manera más sencilla. En lugar de crear un hilo nuevo para cada tarea, puede utilizar un grupo de hilos que se reutilizan para realizar diferentes trabajos. También permite establecer una cantidad máxima de hilos trabajando al mismo tiempo para evitar sobrecargar el sistema. Además, utilizando Callable y Future podemos obtener un resultado de una tarea cuando termina. También permite cerrar los hilos de forma ordenada cuando ya no son necesarios.
+
+
+Ejercicio 7 — CountDownLatch para Sincronización
+
+Pregunta: ¿En qué escenarios CountDownLatch sería más útil que Thread.join()?
+
+Respuesta: CountDownLatch es útil cuando queremos esperar a que varias tareas terminen sin tener que guardar una referencia a cada hilo. Por ejemplo, varias tareas pueden avisar que terminaron usando countDown(), y otro hilo puede esperar hasta que todas hayan terminado con await(). También puede utilizarse para coordinar diferentes etapas de un programa o hacer que varios hilos comiencen al mismo tiempo. Una diferencia importante es que CountDownLatch se utiliza una sola vez y después no se puede reiniciar. Para situaciones en las que se necesita repetir el proceso, existen otras herramientas como CyclicBarrier.
